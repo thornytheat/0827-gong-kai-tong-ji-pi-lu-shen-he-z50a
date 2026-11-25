@@ -6,10 +6,12 @@ LABELS = {
     'CSV_MALFORMED':'CSV 引号或行格式异常', 'ROW_LIMIT':'文件超过 2000 行', 'FILE_REQUIRED':'请选择 CSV 文件',
     'RUN_NOT_FOUND':'批次不存在', 'REVIEW_FIELDS':'请填写 3 至 200 字复核意见', 'STALE_REVIEW':'批次已更新，请刷新',
     'RUN_FINALIZED':'批次已签发', 'UNRESOLVED_ISSUES':'存在待处理差异', 'SAMPLE_UNKNOWN':'样例不存在', 'STAGE_UNKNOWN':'处理阶段不存在',
+    'CROSS_BATCH_INFERENCE':'合并已签发表后仍可反推受保护计数', 'PUBLICATION_BASE_CONFLICT':'跨批底数不一致',
+    'IDEMPOTENCY_CONFLICT':'幂等键已用于其他签发请求', 'PUBLICATION_INPUT':'跨批刊发信息无法识别',
 }
 
 
 def response(error):
     code = error.code
-    status = 404 if code in {'RUN_NOT_FOUND','SAMPLE_UNKNOWN','STAGE_UNKNOWN'} else 409 if code in {'STALE_REVIEW','RUN_FINALIZED','UNRESOLVED_ISSUES'} else 413 if code=='FILE_TOO_LARGE' else 422
+    status = 404 if code in {'RUN_NOT_FOUND','SAMPLE_UNKNOWN','STAGE_UNKNOWN'} else 409 if code in {'STALE_REVIEW','RUN_FINALIZED','UNRESOLVED_ISSUES','CROSS_BATCH_INFERENCE','PUBLICATION_BASE_CONFLICT','IDEMPOTENCY_CONFLICT'} else 413 if code=='FILE_TOO_LARGE' else 422
     return jsonify(code=code,message=LABELS.get(code,code)),status

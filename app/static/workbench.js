@@ -33,6 +33,13 @@ function draw() {
   detail.hidden = !batch;
   if (batch) {
     document.querySelector('#run-status').textContent = `${batch.id.slice(0,10)} · ${batch.status} · r${batch.revision}`;
+    const reason = document.querySelector('#issuance-reason');
+    if (reason) {
+      const verdict = batch.issuance || batch.publication || report.publication_preview;
+      reason.textContent = verdict?.reason_text || (batch.reason && batch.reason !== batch.reason_code ? batch.reason : '');
+      reason.dataset.code = verdict?.reason_code || batch.reason_code || '';
+      reason.hidden = !reason.textContent;
+    }
     detail.querySelector('[value="APPROVED"]').disabled = !report.balance.releasable || batch.status==='APPROVED';
     detail.querySelector('[value="HELD"]').disabled = batch.status==='APPROVED';
     evidence.href = `/api/runs/${batch.id}/evidence`;
@@ -100,7 +107,11 @@ detail.addEventListener('submit',event=>{
   perform(async()=>{
     const payload={status:event.submitter.value,revision:batch.revision,note:detail.elements.note.value};
     const result=await request(`/api/runs/${batch.id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    show(result,true); announce(result.status==='APPROVED'?'批次已签发':'批次已暂缓'); await refresh();
+    show(result,true);
+    const verdict=result.issuance || result.publication;
+    if (verdict?.reason_text) announce(`${result.status === 'APPROVED' ? '签发结论：可以签发' : '签发结论：暂缓'}。${verdict.reason_text}`, result.status!=='APPROVED');
+    else announce(result.status==='APPROVED'?'批次已签发':'批次已暂缓');
+    await refresh();
   });
 });
 preview(stage);

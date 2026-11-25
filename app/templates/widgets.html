@@ -35,7 +35,9 @@
 {% macro archive() %}
 <aside class="panel archive" id="review-area"><h2>批次复核</h2><ul id="history"></ul>
   <form id="review" hidden>
-    <p id="run-status"></p><label for="note">复核意见</label>
+    <p id="run-status"></p>
+    <p id="issuance-reason" role="note"></p>
+    <label for="note">复核意见</label>
     <textarea id="note" name="note" minlength="3" maxlength="200" required></textarea>
     <div class="review-actions"><button name="decision" value="HELD">暂缓</button><button class="action" name="decision" value="APPROVED">签发</button></div>
     <a id="evidence">下载复核证据</a>

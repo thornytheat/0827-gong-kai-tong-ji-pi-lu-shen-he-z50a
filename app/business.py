@@ -74,3 +74,9 @@ def overlap(a, b):
         else:
             j += 1
     return total
+
+
+def cross_batch_decision(current=None, published=None, **kwargs):
+    """Lazy re-export kept in the shared business-rule namespace."""
+    from app.modules.publication import assess_publication
+    return assess_publication(current, published, **kwargs)
